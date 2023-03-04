@@ -8,6 +8,7 @@ let Band = sequelize.define('band', {
     
 });
 
+
 module.exports = {
     Band
 };

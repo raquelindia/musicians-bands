@@ -32,6 +32,38 @@ describe('Band and Musician Models', () => {
        
         // TODO - test creating a musician
        
-       // expect('NO TEST').toBe('EXPECTED VALUE HERE');
+      
     })
-})
+
+    test('tests associations', async () => {
+    const exampleBand = await Band.create({ name: 'XTC', genre: 'Electronic'});
+    const exampleMusician1 = await Musician.create({ name: "Chris", instrument: "Trumpet"});
+    const exampleMusician2 = await Musician.create({ name: "Alex", instrument: "Guitar"});
+    await exampleBand.setMusicians([exampleMusician1, exampleMusician2]);
+    const foundBand = await Band.findAll({ include: Musician});
+    const foundMusician = await Musician.findAll();
+    
+    const musicianOnePath = foundBand[1].musicians[1].name;
+    const musicianTwoPath = foundBand[1].musicians[0].name;
+   
+   
+    
+    
+
+
+    expect(foundBand.length).toBe(2);
+    expect(foundMusician.length).toBe(3);
+    expect(musicianOnePath).toBe("Chris");
+    expect(musicianTwoPath).toBe("Alex");
+    
+
+   // expect(foundBand.name).toBe()
+
+
+    
+
+
+
+});
+
+});
