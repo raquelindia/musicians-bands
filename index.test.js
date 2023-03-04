@@ -1,5 +1,6 @@
 const {sequelize} = require('./db');
-const {Band, Musician} = require('./index')
+const {Band, Musician} = require('./index');
+const { Song } = require('./Song');
 
 describe('Band and Musician Models', () => {
     /**
@@ -47,23 +48,19 @@ describe('Band and Musician Models', () => {
     const musicianTwoPath = foundBand[1].musicians[0].name;
    
    
-    
-    
-
-
     expect(foundBand.length).toBe(2);
     expect(foundMusician.length).toBe(3);
     expect(musicianOnePath).toBe("Chris");
     expect(musicianTwoPath).toBe("Alex");
     
 
-   // expect(foundBand.name).toBe()
-
-
-    
-
-
-
 });
+
+test('test song model', async () => {
+    const createSong = await Song.create({ title: "Cha-Cha Slide", year: 2005});
+
+    expect(createSong.title).toBe("Cha-Cha Slide");
+    expect(createSong.year).toBe(2005);
+})
 
 });
