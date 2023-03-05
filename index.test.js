@@ -41,7 +41,8 @@ describe('Band and Musician Models', () => {
     const exampleMusician1 = await Musician.create({ name: "Chris", instrument: "Trumpet"});
     const exampleMusician2 = await Musician.create({ name: "Alex", instrument: "Guitar"});
     await exampleBand.setMusicians([exampleMusician1, exampleMusician2]);
-    const foundBand = await Band.findAll({ include: Musician});
+    const foundBand = await Band.findAll({ include: [{model: Musician, as: 'musicians'} ] });
+    
     const foundMusician = await Musician.findAll();
     
     const musicianOnePath = foundBand[1].musicians[1].name;
@@ -57,13 +58,18 @@ describe('Band and Musician Models', () => {
 });
 
 test('test song model', async () => {
+    
     const createSong1 = await Song.create({ title: "Cha-Cha Slide", year: 2005});
     const createSong2 = await Song.create({ title: "Twinkle Twinkle Little Star", year: 1930});
     const createSong3 = await Song.create({ title: "Jingle Bells", year: 1995});
-    const foundBand = await Band.findAll();
+    const foundSong = await Song.findAll({ include: [{ model: Band, as: 'bands'}]});
+    const foundBand = await Band.findAll({ include: [{ model: Song, as: 'songs'}, {model: Musician, as: 'musicians'}]});
+    
+
+ 
     const bandOne = foundBand[0];
     const bandTwo = foundBand[1];
-    
+   
 
     // await foundBand.setSongs([createSong1, createSong2, createSong3]);
     await createSong1.addBand(bandOne);
@@ -71,11 +77,20 @@ test('test song model', async () => {
     await bandOne.addSong(createSong1);
     await bandOne.addSong(createSong2);
     await bandOne.addSong(createSong3);
-
-
   const bands1 = await createSong1.getBands();
   const songs1 = await bandOne.getSongs();
+  const loadedBand = await Band.findOne({
+    where: {
+        id: bandOne.id
+    },
+    include: Song
+})
 
+
+
+    expect(loadedBand.songs.length).toBe(3); 
+    expect(loadedBand.songs[0].title).toBe('Cha-Cha Slide');
+    expect(loadedBand.songs[0].year).toBe(2005);
     expect(bands1.length).toBe(2);
     expect(songs1.length).toBe(3);
     expect(bands1[0].name).toBe("NPS");
@@ -87,6 +102,6 @@ test('test song model', async () => {
     expect(createSong3.title).toBe("Jingle Bells");
     expect(createSong3.year).toBe(1995);
     
-})
+});
 
 });
